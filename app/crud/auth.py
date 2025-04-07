@@ -3,14 +3,16 @@ import jwt
 from datetime import datetime, timedelta
 from typing import Tuple
 import asyncio
+from dotenv import load_dotenv
+import os
 
-from sqlalchemy.ext.asyncio import AsyncSession
+load_dotenv()
 
-SECRET_KEY = "your_secret_key"
-REFRESH_SECRET_KEY = "your_refresh_secret_key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS"))
 
 
 async def hash_password(password: str) -> str:

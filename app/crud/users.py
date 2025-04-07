@@ -6,10 +6,6 @@ from app.schemas import UserUpdate
 from sqlalchemy.exc import IntegrityError
 
 
-# def get_user(db: Session, user_id: int):
-#     return db.query(User).filter(User.id == user_id).first()
-
-
 async def get_user_by_email(db: AsyncSession, email: str):
     query = select(User).where(User.email == email)
     user = await db.scalar(query)
@@ -61,13 +57,3 @@ async def update_user(db: AsyncSession, user_code: str, user: UserUpdate):
         await db.commit()
         return db_user
     return None
-
-
-#
-# def delete_user(db: Session, user_id: int):
-#     db_user = db.query(User).filter(User.id == user_id).first()
-#     if db_user:
-#         db.delete(db_user)
-#         db.commit()
-#         return db_user
-#     return None

@@ -24,14 +24,10 @@ class UserUpdate(BaseModel):
     refresh_token: str = None
 
 
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
-
-
 class LoginResponse(BaseModel):
     access_token: str
     refresh_token: str
+    token_type: str
 
 
 class RefreshRequest(BaseModel):

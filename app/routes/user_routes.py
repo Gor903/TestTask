@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 from app.db.database import get_async_session
 from app.schemas import (
     RefreshRequest,
     UserRequest,
     UserResponse,
-    LoginRequest,
     LoginResponse,
     UserUpdate,
 )
@@ -20,10 +19,10 @@ from app.crud import (
     verify_refresh_token,
     update_user,
 )
-
-# from src.app.crud.user_crud import create_user, get_user, update_user, delete_user, get_user_by_username
+from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/users", tags=["Users"])
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
 
 @router.post(
@@ -51,10 +50,11 @@ async def create_new_user(
     status_code=status.HTTP_200_OK,
 )
 async def login_user(
-    user: LoginRequest,
+    user: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_async_session),
 ):
-    db_user = await get_user_by_email(db, user.email)
+    email = user.username
+    db_user = await get_user_by_email(db, email)
     if not db_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -87,6 +87,7 @@ async def login_user(
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
+        "token_type": "bearer",
     }
 
 
@@ -130,4 +131,59 @@ async def refresh_token(
     return {
         "access_token": access_token,
         "refresh_token": db_user.refresh_token,
+        "token_type": "bearer",
     }
+
+
+@router.post(
+    path="/logout",
+    response_model=None,
+    status_code=status.HTTP_200_OK,
+)
+async def logout_user(
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_async_session),
+):
+    code = await get_current_user(token)
+    if not code:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token Expired",
+        )
+    user = await get_user_by_code(db, code)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
+
+    user_update = UserUpdate(
+        refresh_token="_",
+    )
+    await update_user(
+        db=db,
+        user_code=code,
+        user=user_update,
+    )
+
+
+@router.get(
+    path="/me",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_me(
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_async_session),
+):
+    code = await get_current_user(token)
+    if not code:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token Expired",
+        )
+    user = await get_user_by_code(
+        db=db,
+        code=code,
+    )
+    return user

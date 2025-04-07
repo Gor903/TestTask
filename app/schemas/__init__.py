@@ -1,7 +1,6 @@
 from .users import (
     UserRequest,
     UserResponse,
-    LoginRequest,
     LoginResponse,
     RefreshRequest,
     UserUpdate,
@@ -10,7 +9,6 @@ from .users import (
 __all__ = [
     "UserRequest",
     "UserResponse",
-    "LoginRequest",
     "LoginResponse",
     "RefreshRequest",
     "UserUpdate",

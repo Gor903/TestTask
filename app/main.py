@@ -1,8 +1,11 @@
 from fastapi import FastAPI
+from fastapi.security import OAuth2PasswordBearer
+
 from app.db.database import init_db
 from .routes import user_router
 
 app = FastAPI()
+
 app.include_router(user_router)
 
 
