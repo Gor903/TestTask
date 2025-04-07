@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DATABASE_URL = (
-    f"postgresql+asyncpg://"
+    "postgresql+asyncpg://"
     + f"{os.getenv('POSTGRES_USER')}:"
     + f"{os.getenv('POSTGRES_PASSWORD')}@"
     + f"{os.getenv('POSTGRES_HOST')}:"
