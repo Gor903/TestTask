@@ -33,6 +33,6 @@ async def init_db():
         await conn.run_sync(Base.metadata.create_all)
 
 
-async def get_session():
+async def get_async_session():
     async with AsyncSessionMaker() as session:
         yield session
