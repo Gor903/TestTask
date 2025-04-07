@@ -1,4 +1,17 @@
 services:
+  db:
+    image: postgres
+    container_name: TestTaskDB
+    env_file:
+      - ./.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+     - backend
+
+
   web:
     build: .
     container_name: TestTaskBackend
@@ -6,4 +19,15 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+    depends_on:
+      - db
     command: poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+     - backend
+
+volumes:
+  postgres_data:
+
+networks:
+ backend:
+  driver: bridge
