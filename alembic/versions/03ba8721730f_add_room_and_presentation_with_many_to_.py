@@ -1,8 +1,8 @@
 """ADD: room and presentation with many to many
 
-Revision ID: bf9cb846f2cc
-Revises: 68fe64edc7ba
-Create Date: 2025-04-08 18:05:25.280101
+Revision ID: 03ba8721730f
+Revises: bf9cb846f2cc
+Create Date: 2025-04-08 23:45:58.858472
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "bf9cb846f2cc"
-down_revision: Union[str, None] = "68fe64edc7ba"
+revision: str = "03ba8721730f"
+down_revision: Union[str, None] = "bf9cb846f2cc"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

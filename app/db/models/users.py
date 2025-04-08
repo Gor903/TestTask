@@ -58,4 +58,5 @@ class User(Base):
         "PresentationPresenter",
         back_populates="user",
         cascade="all, delete",
+        lazy="select",
     )

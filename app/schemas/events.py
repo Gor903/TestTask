@@ -14,4 +14,8 @@ class PresentationResponse(BaseModel):
     code: uuid.UUID
     title: str
     description: str
-    users: List[uuid.UUID]
+    users: List["PresentationPresenter"]
+
+
+class PresentationPresenter(BaseModel):
+    user_code: uuid.UUID

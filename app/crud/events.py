@@ -25,10 +25,7 @@ async def get_presentation(
 
     presentation = result.scalar_one_or_none()
 
-    print(presentation.users)
-
     return presentation
-
 
 
 async def create_presentation(
@@ -61,16 +58,15 @@ async def create_presentation_presenter(
     presentation: Presentation,
 ):
     try:
-        db_presentation_presenters = [
-            # TODO: db.add()
-            PresentationPresenter(
-                presentation_code=presentation.code,
-                user_code=code,
+        [
+            db.add(
+                PresentationPresenter(
+                    presentation_code=presentation.code,
+                    user_code=code,
+                )
             )
             for code in presenters
         ]
-        for presenter in db_presentation_presenters:
-            db.add(presenter)
         await db.commit()
     except IntegrityError:
         ...
