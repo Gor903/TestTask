@@ -8,6 +8,7 @@ from sqlalchemy.orm import selectinload
 from app.db.models import (
     Presentation,
     PresentationPresenter,
+    Room,
 )
 
 
@@ -70,3 +71,19 @@ async def create_presentation_presenter(
         await db.commit()
     except IntegrityError:
         ...
+
+
+async def create_room(
+    db: AsyncSession,
+    room: dict,
+):
+    try:
+        room = Room(
+            name=room.get("name"),
+            sit_count=room.get("sit_count"),
+        )
+        db.add(room)
+        await db.commit()
+        return room
+    except IntegrityError:
+        return False

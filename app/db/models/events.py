@@ -25,6 +25,7 @@ class Room(Base):
     name: Mapped[str] = Column(
         String(64),
         nullable=False,
+        unique=True,
     )
 
     sit_count: Mapped[int] = Column(

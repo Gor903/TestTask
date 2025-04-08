@@ -19,3 +19,14 @@ class PresentationResponse(BaseModel):
 
 class PresentationPresenter(BaseModel):
     user_code: uuid.UUID
+
+
+class RoomRequest(BaseModel):
+    name: str
+    sit_count: int
+
+
+class RoomResponse(BaseModel):
+    code: uuid.UUID
+    name: str
+    sit_count: int
