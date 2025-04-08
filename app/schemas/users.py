@@ -1,4 +1,5 @@
 import uuid
+from typing import List
 from pydantic import BaseModel, EmailStr, SecretStr
 
 
@@ -16,6 +17,11 @@ class UserResponse(BaseModel):
     last_name: str
     email: EmailStr
     role: str
+    presentations: List["UserPresentationPresenter"]
+
+
+class UserPresentationPresenter(BaseModel):
+    presentation_code: uuid.UUID
 
 
 class UserUpdate(BaseModel):

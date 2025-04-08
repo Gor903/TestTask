@@ -1,5 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.db.models import User
 from .auth import hash_password
 from app.schemas import UserUpdate
@@ -13,8 +15,14 @@ async def get_user_by_email(db: AsyncSession, email: str):
 
 
 async def get_user_by_code(db: AsyncSession, code: str):
-    query = select(User).where(User.code == code)
-    user = await db.scalar(query)
+    stmt = (
+        select(User).options(selectinload(User.presentations)).where(User.code == code)
+    )
+
+    res = await db.execute(stmt)
+
+    user = res.scalar_one_or_none()
+
     return user
 
 
