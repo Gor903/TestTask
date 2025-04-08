@@ -1,9 +1,8 @@
 import uuid
-from typing import List
+from datetime import datetime
+from typing import Annotated, List
 
 from pydantic import BaseModel
-
-from app.db.models import Schedule
 
 
 class PresentationRequest(BaseModel):
@@ -12,11 +11,20 @@ class PresentationRequest(BaseModel):
     presenters: List[uuid.UUID]
 
 
+class Schedule(BaseModel):
+    code: uuid.UUID
+    room_code: uuid.UUID
+    presentation_code: uuid.UUID
+    start_time: datetime
+    end_time: datetime
+
+
 class PresentationResponse(BaseModel):
     code: uuid.UUID
     title: str
     description: str
     users: List["PresentationPresenter"]
+    schedule: Schedule | None = None
 
 
 class PresentationPresenter(BaseModel):

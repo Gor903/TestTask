@@ -22,6 +22,7 @@ from app.crud.events import (
     create_presentation,
     get_presentation,
     create_room,
+    get_presentations,
     get_room,
     get_rooms,
 )
@@ -100,6 +101,38 @@ async def room_create(
     )
 
     return room
+
+
+@router.get(
+    path="/presentations",
+    response_model=List[PresentationResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def presentations_all(
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_async_session),
+):
+    presentations = await get_presentations(db=db)
+
+    return presentations
+
+
+@router.get(
+    path="/presentations/{presentation_code}",
+    response_model=PresentationResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def presentations_all(
+    presentation_code: uuid.UUID,
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_async_session),
+):
+    presentation = await get_presentation(
+        db=db,
+        code=presentation_code,
+    )
+
+    return presentation
 
 
 @router.get(

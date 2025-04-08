@@ -72,6 +72,7 @@ class Presentation(Base):
         "Schedule",
         back_populates="presentation",
         cascade="all, delete",
+        lazy="select",
     )
 
 
@@ -159,4 +160,5 @@ class Schedule(Base):
         "Presentation",
         foreign_keys=[presentation_code],
         back_populates="schedule",
+        lazy="select",
     )

@@ -18,7 +18,10 @@ async def get_presentation(
 ):
     stmt = (
         select(Presentation)
-        .options(selectinload(Presentation.users))
+        .options(
+            selectinload(Presentation.schedule),
+            selectinload(Presentation.users),
+        )
         .where(Presentation.code == code)
     )
 
@@ -87,6 +90,21 @@ async def create_room(
         return room
     except IntegrityError:
         return False
+
+
+async def get_presentations(
+    db: AsyncSession,
+):
+    stmt = select(Presentation).options(
+        selectinload(Presentation.users),
+        selectinload(Presentation.schedule),
+    )
+
+    res = await db.execute(stmt)
+
+    presentations = res.scalars().all()
+
+    return presentations
 
 
 async def get_rooms(
