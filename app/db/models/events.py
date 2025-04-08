@@ -64,6 +64,7 @@ class Presentation(Base):
         "PresentationPresenter",
         back_populates="presentation",
         cascade="all, delete",
+        lazy="selectin",
     )
 
     schedule: Mapped["Schedule"] = relationship(

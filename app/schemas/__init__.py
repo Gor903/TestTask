@@ -6,10 +6,17 @@ from .users import (
     UserUpdate,
 )
 
+from .events import (
+    PresentationRequest,
+    PresentationResponse,
+)
+
 __all__ = [
     "UserRequest",
     "UserResponse",
     "LoginResponse",
     "RefreshRequest",
     "UserUpdate",
+    "PresentationRequest",
+    "PresentationResponse",
 ]
