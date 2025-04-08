@@ -87,3 +87,28 @@ async def create_room(
         return room
     except IntegrityError:
         return False
+
+
+async def get_rooms(
+    db: AsyncSession,
+):
+    stmt = select(Room).options(selectinload(Room.schedules))
+
+    res = await db.execute(stmt)
+
+    rooms = res.scalars().all()
+
+    return rooms
+
+
+async def get_room(
+    db: AsyncSession,
+    code: uuid.UUID,
+):
+    stmt = select(Room).options(selectinload(Room.schedules)).where(Room.code == code)
+
+    res = await db.execute(stmt)
+
+    room = res.scalar_one_or_none()
+
+    return room

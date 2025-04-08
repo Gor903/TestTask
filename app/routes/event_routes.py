@@ -1,3 +1,6 @@
+import uuid
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,6 +22,8 @@ from app.crud.events import (
     create_presentation,
     get_presentation,
     create_room,
+    get_room,
+    get_rooms,
 )
 
 router = APIRouter(prefix="/events", tags=["Events"])
@@ -88,5 +93,42 @@ async def room_create(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Wrong input",
         )
+
+    room = await get_room(
+        db=db,
+        code=room.code,
+    )
+
+    return room
+
+
+@router.get(
+    path="/rooms",
+    response_model=List[RoomResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def rooms_all(
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_async_session),
+):
+    rooms = await get_rooms(db=db)
+
+    return rooms
+
+
+@router.get(
+    path="/room/{room_code}",
+    response_model=RoomResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def rooms_all(
+    room_code: uuid.UUID,
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_async_session),
+):
+    room = await get_room(
+        db=db,
+        code=room_code,
+    )
 
     return room

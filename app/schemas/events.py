@@ -3,6 +3,8 @@ from typing import List
 
 from pydantic import BaseModel
 
+from app.db.models import Schedule
+
 
 class PresentationRequest(BaseModel):
     title: str
@@ -30,3 +32,8 @@ class RoomResponse(BaseModel):
     code: uuid.UUID
     name: str
     sit_count: int
+    schedules: List["RoomSchedules"]
+
+
+class RoomSchedules(BaseModel):
+    schedules: List[uuid.UUID]
