@@ -7,6 +7,7 @@ class UserRequest(BaseModel):
     last_name: str
     email: EmailStr
     password: SecretStr
+    role: str
 
 
 class UserResponse(BaseModel):
@@ -14,6 +15,7 @@ class UserResponse(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
+    role: str
 
 
 class UserUpdate(BaseModel):
