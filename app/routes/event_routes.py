@@ -2,14 +2,12 @@ import uuid
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud import get_user_by_code
 from app.db.database import get_async_session
-from app.db.models import Room
-from app.dependencies import get_current_user
-from app.routes.user_routes import oauth2_scheme
+from app.dependencies import (
+    user_dependency,
+)
 
 from app.schemas import (
     PresentationRequest,
@@ -37,19 +35,9 @@ router = APIRouter(prefix="/events", tags=["Events"])
 )
 async def presentation_create(
     presentation: PresentationRequest,
-    token: str = Depends(oauth2_scheme),
+    user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
-    code = await get_current_user(token)
-    if not code:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token Expired",
-        )
-    user = await get_user_by_code(
-        db=db,
-        code=code,
-    )
     if not user or user.role == "listener":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -81,7 +69,7 @@ async def presentation_create(
 )
 async def room_create(
     room: RoomRequest,
-    token: str = Depends(oauth2_scheme),
+    user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
     room = await create_room(
@@ -109,7 +97,7 @@ async def room_create(
     status_code=status.HTTP_200_OK,
 )
 async def presentations_all(
-    token: str = Depends(oauth2_scheme),
+    user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
     presentations = await get_presentations(db=db)
@@ -124,7 +112,7 @@ async def presentations_all(
 )
 async def presentations_all(
     presentation_code: uuid.UUID,
-    token: str = Depends(oauth2_scheme),
+    user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
     presentation = await get_presentation(
@@ -147,7 +135,7 @@ async def presentations_all(
     status_code=status.HTTP_200_OK,
 )
 async def rooms_all(
-    token: str = Depends(oauth2_scheme),
+    user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
     rooms = await get_rooms(db=db)
@@ -162,7 +150,7 @@ async def rooms_all(
 )
 async def rooms_all(
     room_code: uuid.UUID,
-    token: str = Depends(oauth2_scheme),
+    user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
     room = await get_room(

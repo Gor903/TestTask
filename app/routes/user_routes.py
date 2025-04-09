@@ -19,10 +19,12 @@ from app.crud import (
     verify_refresh_token,
     update_user,
 )
-from app.dependencies import get_current_user
+from app.dependencies import (
+    get_current_user,
+    user_dependency,
+)
 
 router = APIRouter(prefix="/users", tags=["Users"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
 
 @router.post(
@@ -141,16 +143,9 @@ async def refresh_token(
     status_code=status.HTTP_200_OK,
 )
 async def logout_user(
-    token: str = Depends(oauth2_scheme),
+    user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
-    code = await get_current_user(token)
-    if not code:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token Expired",
-        )
-    user = await get_user_by_code(db, code)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -162,7 +157,7 @@ async def logout_user(
     )
     await update_user(
         db=db,
-        user_code=code,
+        user_code=user.code,
         user=user_update,
     )
 
@@ -173,17 +168,12 @@ async def logout_user(
     status_code=status.HTTP_200_OK,
 )
 async def get_me(
-    token: str = Depends(oauth2_scheme),
+    user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
-    code = await get_current_user(token)
-    if not code:
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token Expired",
+            detail="User not found",
         )
-    user = await get_user_by_code(
-        db=db,
-        code=code,
-    )
     return user
