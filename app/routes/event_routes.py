@@ -132,6 +132,12 @@ async def presentations_all(
         code=presentation_code,
     )
 
+    if not presentation:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Presentation not found",
+        )
+
     return presentation
 
 
@@ -163,5 +169,11 @@ async def rooms_all(
         db=db,
         code=room_code,
     )
+
+    if not room:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Room not found",
+        )
 
     return room

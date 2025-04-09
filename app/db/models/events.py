@@ -37,6 +37,7 @@ class Room(Base):
         "Schedule",
         back_populates="room",
         cascade="all, delete",
+        lazy="select",
     )
 
 
@@ -102,11 +103,13 @@ class PresentationPresenter(Base):
         "Presentation",
         foreign_keys=[presentation_code],
         back_populates="users",
+        lazy="select",
     )
     user: Mapped["User"] = relationship(
         "User",
         foreign_keys=[user_code],
         back_populates="presentations",
+        lazy="select",
     )
 
 
@@ -154,6 +157,7 @@ class Schedule(Base):
         "Room",
         foreign_keys=[room_code],
         back_populates="schedules",
+        lazy="select",
     )
 
     presentation: Mapped[Presentation] = relationship(
