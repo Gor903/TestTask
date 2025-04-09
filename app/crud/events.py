@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 
+from app.crud import get_user_by_code
 from app.db.models import (
     Presentation,
     PresentationPresenter,
@@ -55,25 +56,27 @@ async def create_presentation(
         return False
 
 
-# TODO: check users' role
 async def create_presentation_presenter(
     db: AsyncSession,
     presenters: list,
     presentation: Presentation,
 ):
     try:
-        [
+        for code in presenters:
+            user = await get_user_by_code(db, code)
+            if not user or user.role.value != "presenter":
+                continue
             db.add(
                 PresentationPresenter(
                     presentation_code=presentation.code,
                     user_code=code,
                 )
             )
-            for code in presenters
-        ]
         await db.commit()
     except IntegrityError:
         ...
+    except Exception as e:
+        print(e)
 
 
 async def create_room(
