@@ -14,6 +14,8 @@ from app.schemas import (
     PresentationResponse,
     RoomRequest,
     RoomResponse,
+    SchedulesRequest,
+    SchedulesResponse,
 )
 
 from app.crud.events import (
@@ -23,6 +25,9 @@ from app.crud.events import (
     get_presentations,
     get_room,
     get_rooms,
+    create_schedule,
+    get_schedule,
+    get_schedules,
 )
 
 router = APIRouter(prefix="/events", tags=["Events"])
@@ -91,6 +96,30 @@ async def room_create(
     return room
 
 
+@router.post(
+    path="/schedule/create",
+    response_model=SchedulesResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def schedule_create(
+    schedule: SchedulesRequest,
+    user: user_dependency,
+    db: AsyncSession = Depends(get_async_session),
+):
+    schedule = await create_schedule(
+        db=db,
+        schedule=schedule.model_dump(),
+    )
+
+    if not schedule:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong input",
+        )
+
+    return schedule
+
+
 @router.get(
     path="/presentations",
     response_model=List[PresentationResponse],
@@ -100,7 +129,7 @@ async def presentations_all(
     user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
-    presentations = await get_presentations(db=db)
+    presentations = await get_presentations(db=db, user_code=user.code)
 
     return presentations
 
@@ -110,7 +139,7 @@ async def presentations_all(
     response_model=PresentationResponse,
     status_code=status.HTTP_200_OK,
 )
-async def presentations_all(
+async def presentation_get(
     presentation_code: uuid.UUID,
     user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
@@ -165,3 +194,47 @@ async def rooms_all(
         )
 
     return room
+
+
+@router.get(
+    path="/schedules",
+    response_model=List[SchedulesResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def schedules_all(
+    user: user_dependency,
+    db: AsyncSession = Depends(get_async_session),
+    room_code: uuid.UUID = None,
+    future: bool = False,
+):
+    schedules = await get_schedules(
+        db=db,
+        room_code=room_code,
+        future=future,
+    )
+
+    return schedules
+
+
+@router.get(
+    path="/schedule/{schedule_code}",
+    response_model=SchedulesResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def schedule_get(
+    code: uuid.UUID,
+    user: user_dependency,
+    db: AsyncSession = Depends(get_async_session),
+):
+    schedule = await get_schedule(
+        db=db,
+        code=code,
+    )
+
+    if not schedule:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Schedule not found",
+        )
+
+    return schedule

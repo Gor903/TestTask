@@ -43,7 +43,13 @@ async def create_new_user(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username already taken"
         )
     response = await create_user(db, user_data)
-    return response
+
+    user = await get_user_by_code(
+        db=db,
+        code=response.code,
+    )
+
+    return user
 
 
 @router.post(

@@ -3,8 +3,8 @@ from typing import Annotated
 import jwt
 from dotenv import load_dotenv
 import os
-
-from fastapi import Depends
+from starlette import status
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,8 +30,7 @@ async def get_current_user(
         user = await get_user_by_code(code=code, db=db)
         return user
     except Exception as e:
-        print(e)
-        return None
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
 
 user_dependency = Annotated[dict, Depends(get_current_user)]

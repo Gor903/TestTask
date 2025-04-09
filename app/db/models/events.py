@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
+from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Column, Text
 from sqlalchemy import UUID as sqlalchemy_UUID
@@ -144,12 +145,12 @@ class Schedule(Base):
     )
 
     start_time: Mapped[datetime] = mapped_column(
-        DateTime,
+        TIMESTAMP(timezone=True),
         nullable=False,
     )
 
     end_time: Mapped[datetime] = mapped_column(
-        DateTime,
+        TIMESTAMP(timezone=True),
         nullable=False,
     )
 

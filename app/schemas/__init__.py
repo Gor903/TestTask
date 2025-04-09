@@ -6,7 +6,14 @@ from .users import (
     UserUpdate,
 )
 
-from .events import PresentationRequest, PresentationResponse, RoomRequest, RoomResponse
+from .events import (
+    PresentationRequest,
+    PresentationResponse,
+    RoomRequest,
+    RoomResponse,
+    SchedulesRequest,
+    SchedulesResponse,
+)
 
 __all__ = [
     "UserRequest",
@@ -18,4 +25,6 @@ __all__ = [
     "PresentationResponse",
     "RoomRequest",
     "RoomResponse",
+    "SchedulesRequest",
+    "SchedulesResponse",
 ]
