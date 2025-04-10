@@ -179,6 +179,45 @@ async def create_schedule(
     await db.commit()
 
 
+async def update_schedule(
+    db: AsyncSession,
+    schedule_update: dict,
+    schedule: Schedule,
+):
+    try:
+        start = schedule_update.get("start_time", schedule.start_time)
+        end = schedule_update.get("end_time", schedule.end_time)
+
+        if end <= start:
+            raise Exception("Wrong datetime")
+
+        stmt = (
+            select(Schedule)
+            .where(Schedule.start_time < end)
+            .where(Schedule.end_time > start)
+            .where(Schedule.code != schedule.code)
+        )
+        await db.execute(stmt)
+        results = await db.execute(stmt)
+        result = results.scalars().all()
+
+        if result:
+            raise Exception("Choose  another time")
+
+        for i, v in schedule_update.items():
+            setattr(schedule, i, v)
+
+        await db.commit()
+
+        return schedule
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error: {e}",
+        )
+
+
 async def get_schedules(
     db: AsyncSession,
     room_code: uuid.UUID = None,

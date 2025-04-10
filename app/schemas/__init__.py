@@ -14,6 +14,7 @@ from .events import (
     RoomResponse,
     SchedulesRequest,
     SchedulesResponse,
+    ScheduleUpdate,
 )
 
 __all__ = [
@@ -28,4 +29,5 @@ __all__ = [
     "RoomResponse",
     "SchedulesRequest",
     "SchedulesResponse",
+    "ScheduleUpdate",
 ]

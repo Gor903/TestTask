@@ -5,6 +5,20 @@ from .auth import (
     create_refresh_token,
     verify_refresh_token,
 )
+from .events import (
+    create_presentation,
+    get_presentation,
+    get_presentations,
+    update_presentation,
+    create_room,
+    get_room,
+    get_rooms,
+    create_schedule,
+    get_schedule,
+    get_schedules,
+    update_schedule,
+)
+
 
 __all__ = [
     "create_user",
@@ -15,4 +29,15 @@ __all__ = [
     "create_refresh_token",
     "verify_refresh_token",
     "update_user",
+    "create_presentation",
+    "get_presentation",
+    "get_presentations",
+    "update_presentation",
+    "create_room",
+    "get_room",
+    "get_rooms",
+    "create_schedule",
+    "get_schedule",
+    "get_schedules",
+    "update_schedule",
 ]

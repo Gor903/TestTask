@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
+from sqlalchemy.orm import Mapped
 
 
 class RelationCode(BaseModel):
@@ -62,3 +63,10 @@ class SchedulesResponse(BaseModel):
     presentation: RelationCode
     start_time: datetime
     end_time: datetime
+
+
+class ScheduleUpdate(BaseModel):
+    room_code: Optional[uuid.UUID] = None
+    presentation_code: Optional[uuid.UUID] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None

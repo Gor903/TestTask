@@ -17,9 +17,10 @@ from app.schemas import (
     RoomResponse,
     SchedulesRequest,
     SchedulesResponse,
+    ScheduleUpdate,
 )
 
-from app.crud.events import (
+from app.crud import (
     create_presentation,
     get_presentation,
     get_presentations,
@@ -30,8 +31,10 @@ from app.crud.events import (
     create_schedule,
     get_schedule,
     get_schedules,
+    update_schedule,
+    get_user_by_code,
 )
-from app.schemas.events import PresentationUpdate
+
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
@@ -301,6 +304,56 @@ async def presentation_put_update(
     )
 
     return presentation
+
+
+@router.patch(
+    path="/schedule/update/{schedule_code}",
+    response_model=SchedulesResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def schedule_put_update(
+    user: user_dependency,
+    schedule_code: uuid.UUID,
+    schedule_update: ScheduleUpdate,
+    db: AsyncSession = Depends(get_async_session),
+):
+    schedule = await get_schedule(
+        db=db,
+        code=schedule_code,
+    )
+
+    if not schedule or not any(
+        map(
+            lambda x: x.presentation_code == schedule.presentation.code,
+            user.presentations,
+        )
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to perform this action",
+        )
+
+    schedule_update = schedule_update.model_dump(exclude_none=True)
+
+    schedule = await update_schedule(
+        db=db,
+        schedule=schedule,
+        schedule_update=schedule_update,
+    )
+
+    if not schedule:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong input",
+        )
+
+    await db.refresh(schedule)
+    schedule = await get_schedule(
+        db=db,
+        code=schedule.code,
+    )
+
+    return schedule
 
 
 @router.delete(
