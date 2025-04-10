@@ -28,6 +28,8 @@ async def get_current_user(
         if not code:
             raise Exception("Invalid token")
         user = await get_user_by_code(code=code, db=db)
+        if not user:
+            raise Exception("User not found")
         return user
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))

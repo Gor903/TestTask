@@ -32,7 +32,7 @@ class PresentationResponse(BaseModel):
     title: str
     description: str
     users: List[PresentationPresenter]
-    schedule: RelationCode
+    schedule: RelationCode | None = None
 
 
 class RoomRequest(BaseModel):

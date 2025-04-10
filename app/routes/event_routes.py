@@ -43,7 +43,7 @@ async def presentation_create(
     user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
-    if not user or user.role == "listener":
+    if user.role == "listener":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect request",
@@ -77,6 +77,8 @@ async def room_create(
     user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
+    # TODO: Only admin can create Room
+
     room = await create_room(
         db=db,
         room=room.model_dump(),
@@ -106,6 +108,12 @@ async def schedule_create(
     user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
+    if user.role == "listener":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect request",
+        )
+
     schedule = await create_schedule(
         db=db,
         schedule=schedule.model_dump(),
