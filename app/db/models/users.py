@@ -7,7 +7,7 @@ from app.db.database import Base
 from app.db.models.enums import UserRole
 
 if TYPE_CHECKING:
-    from app.db.models.events import PresentationPresenter
+    from app.db.models.events import PresentationPresenter, Registration
 
 
 class User(Base):
@@ -57,6 +57,11 @@ class User(Base):
     presentations: Mapped[list["PresentationPresenter"]] = relationship(
         "PresentationPresenter",
         back_populates="user",
-        # cascade="all, delete",
+        lazy="select",
+    )
+
+    registrations: Mapped[list["Registration"]] = relationship(
+        "Registration",
+        back_populates="user",
         lazy="select",
     )

@@ -167,3 +167,47 @@ class Schedule(Base):
         back_populates="schedule",
         lazy="select",
     )
+
+    registrations: Mapped["Schedule"] = relationship(
+        "Registration",
+        back_populates="schedule",
+        lazy="select",
+    )
+
+
+class Registration(Base):
+    __tablename__ = "registrations"
+
+    schedule_code: Mapped[UUID] = mapped_column(
+        sqlalchemy_UUID,
+        ForeignKey(
+            "schedules.code",
+            ondelete="CASCADE",
+        ),
+        primary_key=True,
+        nullable=False,
+    )
+
+    user_code: Mapped[UUID] = mapped_column(
+        sqlalchemy_UUID,
+        ForeignKey(
+            "user.code",
+            ondelete="CASCADE",
+        ),
+        primary_key=True,
+        nullable=False,
+    )
+
+    schedule: Mapped[Schedule] = relationship(
+        "Schedule",
+        foreign_keys=[schedule_code],
+        back_populates="registrations",
+        lazy="select",
+    )
+
+    user: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[user_code],
+        back_populates="registrations",
+        lazy="select",
+    )
