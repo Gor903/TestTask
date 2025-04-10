@@ -15,6 +15,7 @@ from .events import (
     SchedulesRequest,
     SchedulesResponse,
     ScheduleUpdate,
+    RegistrationResponse,
 )
 
 __all__ = [
@@ -30,4 +31,5 @@ __all__ = [
     "SchedulesRequest",
     "SchedulesResponse",
     "ScheduleUpdate",
+    "RegistrationResponse",
 ]

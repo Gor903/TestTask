@@ -15,6 +15,7 @@ from app.db.models import (
     Room,
     Schedule,
 )
+from app.db.models.events import Registration
 
 
 async def get_presentation(
@@ -306,3 +307,41 @@ async def get_room(
     room = res.scalar_one_or_none()
 
     return room
+
+
+async def create_registration(
+    db: AsyncSession,
+    schedule_code: uuid.UUID,
+    user_code: uuid.UUID,
+):
+    try:
+        registration = Registration(
+            schedule_code=schedule_code,
+            user_code=user_code,
+        )
+
+        db.add(registration)
+        await db.commit()
+        return registration
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error: {e}",
+        )
+
+
+async def get_registration(
+    schedule_code: uuid.UUID,
+    user_code: uuid.UUID,
+    db: AsyncSession,
+):
+    stmt = (
+        select(Registration)
+        .where(Registration.schedule_code == schedule_code)
+        .where(Registration.user_code == user_code)
+    )
+
+    res = await db.execute(stmt)
+    registration = res.scalar_one_or_none()
+
+    return registration

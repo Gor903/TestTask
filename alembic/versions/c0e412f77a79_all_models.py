@@ -1,8 +1,8 @@
 """All models
 
-Revision ID: f3f15c843f5c
+Revision ID: c0e412f77a79
 Revises:
-Create Date: 2025-04-10 16:36:07.550714
+Create Date: 2025-04-10 17:02:57.174820
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "f3f15c843f5c"
+revision: str = "c0e412f77a79"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

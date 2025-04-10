@@ -4,6 +4,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.crud.events import get_registration
 from app.db.database import get_async_session
 from app.dependencies import (
     user_dependency,
@@ -18,10 +19,12 @@ from app.schemas import (
     SchedulesRequest,
     SchedulesResponse,
     ScheduleUpdate,
+    RegistrationResponse,
 )
 
 from app.crud import (
     create_presentation,
+    create_registration,
     get_presentation,
     get_presentations,
     update_presentation,
@@ -32,7 +35,6 @@ from app.crud import (
     get_schedule,
     get_schedules,
     update_schedule,
-    get_user_by_code,
 )
 
 
@@ -137,6 +139,31 @@ async def schedule_create(
     )
 
     return schedule
+
+
+@router.post(
+    path="/registration/create",
+    response_model=RegistrationResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def registration_create(
+    user: user_dependency,
+    schedule_code: uuid.UUID,
+    db: AsyncSession = Depends(get_async_session),
+):
+    if user.role.value != "listener":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect request",
+        )
+
+    registration = await create_registration(
+        db=db,
+        schedule_code=schedule_code,
+        user_code=user.code,
+    )
+
+    return registration
 
 
 @router.get(
@@ -419,3 +446,26 @@ async def schedule_delete(
     await db.commit()
 
     return None
+
+
+@router.delete(
+    path="/registration/{registration_code}",
+)
+async def registration_delete(
+    schedule_code: uuid.UUID,
+    user: user_dependency,
+    db: AsyncSession = Depends(get_async_session),
+):
+    registration = await get_registration(
+        schedule_code=schedule_code,
+        db=db,
+        user_code=user.code,
+    )
+    if not registration:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Registration not found",
+        )
+
+    await db.delete(registration)
+    await db.commit()

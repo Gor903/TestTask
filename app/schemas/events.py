@@ -70,3 +70,9 @@ class ScheduleUpdate(BaseModel):
     presentation_code: Optional[uuid.UUID] = None
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
+
+
+class RegistrationResponse(BaseModel):
+    code: uuid.UUID
+    schedule_code: uuid.UUID
+    user_code: uuid.UUID

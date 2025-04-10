@@ -17,6 +17,7 @@ from .events import (
     get_schedule,
     get_schedules,
     update_schedule,
+    create_registration,
 )
 
 
@@ -40,4 +41,5 @@ __all__ = [
     "get_schedule",
     "get_schedules",
     "update_schedule",
+    "create_registration",
 ]

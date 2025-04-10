@@ -178,6 +178,13 @@ class Schedule(Base):
 class Registration(Base):
     __tablename__ = "registrations"
 
+    code: Mapped[UUID] = mapped_column(
+        sqlalchemy_UUID,
+        unique=True,
+        default=uuid4,
+        nullable=False,
+    )
+
     schedule_code: Mapped[UUID] = mapped_column(
         sqlalchemy_UUID,
         ForeignKey(
