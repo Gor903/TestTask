@@ -19,12 +19,12 @@ class PresentationRequest(BaseModel):
     presenters: List[uuid.UUID]
 
 
-class Schedule(BaseModel):
-    code: uuid.UUID
-    room_code: uuid.UUID
-    presentation_code: uuid.UUID
-    start_time: datetime
-    end_time: datetime
+# class Schedule(BaseModel):
+#     code: uuid.UUID
+#     room_code: uuid.UUID
+#     presentation_code: uuid.UUID
+#     start_time: datetime
+#     end_time: datetime
 
 
 class PresentationResponse(BaseModel):
@@ -57,6 +57,6 @@ class SchedulesRequest(BaseModel):
 class SchedulesResponse(BaseModel):
     code: uuid.UUID
     room_code: uuid.UUID
-    presentation_code: uuid.UUID
+    presentation: RelationCode
     start_time: datetime
     end_time: datetime

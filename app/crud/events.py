@@ -149,7 +149,9 @@ async def get_schedules(
     future: bool = False,
 ):
 
-    stmt = select(Schedule)
+    stmt = select(Schedule).options(
+        selectinload(Schedule.presentation),
+    )
 
     if room_code:
         stmt = stmt.where(Schedule.room_code == room_code)
@@ -167,7 +169,13 @@ async def get_schedule(
     db: AsyncSession,
     code: uuid.UUID,
 ):
-    stmt = select(Schedule).where(Schedule.code == code)
+    stmt = (
+        select(Schedule)
+        .options(
+            selectinload(Schedule.presentation),
+        )
+        .where(Schedule.code == code)
+    )
 
     result = await db.execute(stmt)
 
