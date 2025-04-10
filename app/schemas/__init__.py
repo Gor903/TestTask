@@ -9,6 +9,7 @@ from .users import (
 from .events import (
     PresentationRequest,
     PresentationResponse,
+    PresentationUpdate,
     RoomRequest,
     RoomResponse,
     SchedulesRequest,

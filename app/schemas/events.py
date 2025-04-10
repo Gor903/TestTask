@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import Annotated, List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -19,20 +19,22 @@ class PresentationRequest(BaseModel):
     presenters: List[uuid.UUID]
 
 
-# class Schedule(BaseModel):
-#     code: uuid.UUID
-#     room_code: uuid.UUID
-#     presentation_code: uuid.UUID
-#     start_time: datetime
-#     end_time: datetime
-
-
 class PresentationResponse(BaseModel):
     code: uuid.UUID
     title: str
     description: str
     users: List[PresentationPresenter]
     schedule: RelationCode | None = None
+
+    class Config:
+        from_attributes = True
+        orm_mode = True
+
+
+class PresentationUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    presenters: List[uuid.UUID]
 
 
 class RoomRequest(BaseModel):

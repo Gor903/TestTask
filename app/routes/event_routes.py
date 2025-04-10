@@ -12,6 +12,7 @@ from app.dependencies import (
 from app.schemas import (
     PresentationRequest,
     PresentationResponse,
+    PresentationUpdate,
     RoomRequest,
     RoomResponse,
     SchedulesRequest,
@@ -21,14 +22,16 @@ from app.schemas import (
 from app.crud.events import (
     create_presentation,
     get_presentation,
-    create_room,
     get_presentations,
+    update_presentation,
+    create_room,
     get_room,
     get_rooms,
     create_schedule,
     get_schedule,
     get_schedules,
 )
+from app.schemas.events import PresentationUpdate
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
@@ -253,6 +256,53 @@ async def schedule_get(
     return schedule
 
 
+@router.patch(
+    path="/presentation/update/{presentation_code}",
+    response_model=PresentationResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def presentation_put_update(
+    user: user_dependency,
+    presentation_code: uuid.UUID,
+    presentation_update: PresentationUpdate,
+    db: AsyncSession = Depends(get_async_session),
+):
+    presentation = await get_presentation(
+        db=db,
+        code=presentation_code,
+    )
+
+    if not presentation or not any(
+        map(lambda x: user.code == x.user_code, presentation.users)
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to perform this action",
+        )
+
+    presentation_update = presentation_update.model_dump(exclude_none=True)
+
+    presentation = await update_presentation(
+        db=db,
+        presentation=presentation,
+        presentation_update=presentation_update,
+    )
+
+    if not presentation:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong input",
+        )
+
+    await db.refresh(presentation)
+    presentation = await get_presentation(
+        db=db,
+        code=presentation.code,
+    )
+
+    return presentation
+
+
 @router.delete(
     path="/presentation/{presentation_code}",
 )
@@ -261,12 +311,6 @@ async def presentation_delete(
     user: user_dependency,
     db: AsyncSession = Depends(get_async_session),
 ):
-    if not user or user.role == "listener":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect request",
-        )
-
     presentation = await get_presentation(
         db=db,
         code=code,

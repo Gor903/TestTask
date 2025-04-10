@@ -57,6 +57,6 @@ class User(Base):
     presentations: Mapped[list["PresentationPresenter"]] = relationship(
         "PresentationPresenter",
         back_populates="user",
-        cascade="all, delete",
+        # cascade="all, delete",
         lazy="select",
     )

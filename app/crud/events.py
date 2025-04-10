@@ -48,8 +48,7 @@ async def create_presentation(
             description=presentation.get("description"),
         )
         db.add(db_presentation)
-        # await db.commit()
-        # await db.refresh(db_presentation)
+
         await create_presentation_presenter(
             db=db,
             presenters=presenters,
@@ -61,12 +60,49 @@ async def create_presentation(
     return db_presentation
 
 
+async def update_presentation(
+    db: AsyncSession,
+    presentation: Presentation,
+    presentation_update: dict,
+):
+    try:
+        presenters = presentation_update.get("presenters", [])
+
+        if presenters:
+            presentation_update.pop("presenters")
+
+        for i, v in presentation_update.items():
+            setattr(presentation, i, v)
+
+        await create_presentation_presenter(
+            db=db,
+            presenters=presenters,
+            presentation=presentation,
+            replace=True,
+        )
+
+    except IntegrityError:
+        return False
+
+    return presentation
+
+
 async def create_presentation_presenter(
     db: AsyncSession,
     presenters: list,
     presentation: Presentation,
+    replace: bool = False,
 ):
     try:
+        if replace:
+            stmt = select(PresentationPresenter).where(
+                PresentationPresenter.presentation_code == presentation.code
+            )
+
+            presentation_presenters = await db.execute(stmt)
+            for p in presentation_presenters.scalars().all():
+                await db.delete(p)
+
         for code in presenters:
             user = await get_user_by_code(db, code)
             if not user or user.role.value != "presenter":

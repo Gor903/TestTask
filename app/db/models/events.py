@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Column, Text
+from sqlalchemy import ForeignKey, Integer, String, Column, Text
 from sqlalchemy import UUID as sqlalchemy_UUID
 from app.db.database import Base
 
@@ -66,14 +66,14 @@ class Presentation(Base):
     users: Mapped[list["PresentationPresenter"]] = relationship(
         "PresentationPresenter",
         back_populates="presentation",
-        cascade="all, delete",
+        # cascade="all, delete",
         lazy="select",
     )
 
     schedule: Mapped["Schedule"] = relationship(
         "Schedule",
         back_populates="presentation",
-        cascade="all, delete",
+        # cascade="all, delete",
         lazy="select",
     )
 
