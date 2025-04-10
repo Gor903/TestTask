@@ -125,6 +125,11 @@ async def schedule_create(
             detail="Wrong input",
         )
 
+    schedule = await get_schedule(
+        db=db,
+        code=schedule.code,
+    )
+
     return schedule
 
 
@@ -246,6 +251,39 @@ async def schedule_get(
         )
 
     return schedule
+
+
+@router.delete(
+    path="/presentation/{presentation_code}",
+)
+async def presentation_delete(
+    code: uuid.UUID,
+    user: user_dependency,
+    db: AsyncSession = Depends(get_async_session),
+):
+    if not user or user.role == "listener":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect request",
+        )
+
+    presentation = await get_presentation(
+        db=db,
+        code=code,
+    )
+
+    if not presentation or not any(
+        map(lambda x: user.code == x.user_code, presentation.users)
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to perform this action",
+        )
+
+    await db.delete(presentation)
+    await db.commit()
+
+    return None
 
 
 @router.delete(
