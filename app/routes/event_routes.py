@@ -77,37 +77,6 @@ async def presentation_create(
 
 
 @router.post(
-    path="/room/create",
-    response_model=RoomResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-async def room_create(
-    room: RoomRequest,
-    user: user_dependency,
-    db: AsyncSession = db_dependency,
-):
-    # TODO: Only admin can create Room
-
-    room = await create_room(
-        db=db,
-        room=room.model_dump(),
-    )
-
-    if not room:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Wrong input",
-        )
-
-    room = await get_room(
-        db=db,
-        code=room.code,
-    )
-
-    return room
-
-
-@router.post(
     path="/schedule/create",
     response_model=SchedulesResponse,
     status_code=status.HTTP_201_CREATED,

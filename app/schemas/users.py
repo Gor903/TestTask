@@ -10,7 +10,8 @@ class UserRequest(BaseModel):
     password: SecretStr
     role: str
 
-    model_config = ConfigDict(from_attributes = True)
+    model_config = ConfigDict(from_attributes=True)
+
 
 class UserResponse(BaseModel):
     code: uuid.UUID
@@ -20,7 +21,7 @@ class UserResponse(BaseModel):
     role: str
     presentations: List["UserPresentationPresenter"]
 
-    model_config = ConfigDict(from_attributes = True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserPresentationPresenter(BaseModel):

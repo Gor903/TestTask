@@ -6,4 +6,5 @@ from .database import (
     init_db,
     get_async_session,
     DATABASE_URL,
+    AsyncSessionMaker,
 )

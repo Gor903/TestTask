@@ -32,9 +32,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_new_user(
-    user: UserRequest, db: AsyncSession = db_dependency
-):
+async def create_new_user(user: UserRequest, db: AsyncSession = db_dependency):
     user_data = user.model_dump()
     user_data["password"] = user_data["password"].get_secret_value()
     db_user = await get_user_by_email(db, user_data["email"])
