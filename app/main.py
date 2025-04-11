@@ -1,9 +1,7 @@
 from fastapi import FastAPI
-from fastapi.security import OAuth2PasswordBearer
 
 from app.db.database import init_db
 from .routes import user_router, event_router
-
 
 app = FastAPI()
 

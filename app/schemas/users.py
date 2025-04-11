@@ -1,6 +1,6 @@
 import uuid
 from typing import List
-from pydantic import BaseModel, EmailStr, SecretStr
+from pydantic import BaseModel, ConfigDict, EmailStr, SecretStr
 
 
 class UserRequest(BaseModel):
@@ -10,6 +10,7 @@ class UserRequest(BaseModel):
     password: SecretStr
     role: str
 
+    model_config = ConfigDict(from_attributes = True)
 
 class UserResponse(BaseModel):
     code: uuid.UUID
@@ -18,6 +19,8 @@ class UserResponse(BaseModel):
     email: EmailStr
     role: str
     presentations: List["UserPresentationPresenter"]
+
+    model_config = ConfigDict(from_attributes = True)
 
 
 class UserPresentationPresenter(BaseModel):

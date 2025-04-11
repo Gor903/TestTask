@@ -8,6 +8,7 @@ from app.crud.events import get_registration
 from app.db.database import get_async_session
 from app.dependencies import (
     user_dependency,
+    db_dependency,
 )
 
 from app.schemas import (
@@ -49,7 +50,7 @@ router = APIRouter(prefix="/events", tags=["Events"])
 async def presentation_create(
     presentation: PresentationRequest,
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     if user.role == "listener":
         raise HTTPException(
@@ -83,7 +84,7 @@ async def presentation_create(
 async def room_create(
     room: RoomRequest,
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     # TODO: Only admin can create Room
 
@@ -114,7 +115,7 @@ async def room_create(
 async def schedule_create(
     schedule: SchedulesRequest,
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     if user.role == "listener":
         raise HTTPException(
@@ -149,7 +150,7 @@ async def schedule_create(
 async def registration_create(
     user: user_dependency,
     schedule_code: uuid.UUID,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     if user.role.value != "listener":
         raise HTTPException(
@@ -173,7 +174,7 @@ async def registration_create(
 )
 async def presentations_all(
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     presentations = await get_presentations(db=db, user_code=user.code)
 
@@ -188,7 +189,7 @@ async def presentations_all(
 async def presentation_get(
     presentation_code: uuid.UUID,
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     presentation = await get_presentation(
         db=db,
@@ -211,7 +212,7 @@ async def presentation_get(
 )
 async def rooms_all(
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     rooms = await get_rooms(db=db)
 
@@ -226,7 +227,7 @@ async def rooms_all(
 async def rooms_all(
     room_code: uuid.UUID,
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     room = await get_room(
         db=db,
@@ -249,7 +250,7 @@ async def rooms_all(
 )
 async def schedules_all(
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
     room_code: uuid.UUID = None,
     future: bool = False,
 ):
@@ -270,7 +271,7 @@ async def schedules_all(
 async def schedule_get(
     code: uuid.UUID,
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     schedule = await get_schedule(
         db=db,
@@ -295,7 +296,7 @@ async def presentation_put_update(
     user: user_dependency,
     presentation_code: uuid.UUID,
     presentation_update: PresentationUpdate,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     presentation = await get_presentation(
         db=db,
@@ -342,7 +343,7 @@ async def schedule_put_update(
     user: user_dependency,
     schedule_code: uuid.UUID,
     schedule_update: ScheduleUpdate,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     schedule = await get_schedule(
         db=db,
@@ -389,7 +390,7 @@ async def schedule_put_update(
 async def presentation_delete(
     code: uuid.UUID,
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     presentation = await get_presentation(
         db=db,
@@ -416,7 +417,7 @@ async def presentation_delete(
 async def schedule_delete(
     code: uuid.UUID,
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     if not user or user.role == "listener":
         raise HTTPException(
@@ -454,7 +455,7 @@ async def schedule_delete(
 async def registration_delete(
     schedule_code: uuid.UUID,
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     registration = await get_registration(
         schedule_code=schedule_code,

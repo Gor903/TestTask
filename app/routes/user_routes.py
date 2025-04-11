@@ -20,7 +20,7 @@ from app.crud import (
     update_user,
 )
 from app.dependencies import (
-    get_current_user,
+    db_dependency,
     user_dependency,
 )
 
@@ -33,7 +33,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
     status_code=status.HTTP_201_CREATED,
 )
 async def create_new_user(
-    user: UserRequest, db: AsyncSession = Depends(get_async_session)
+    user: UserRequest, db: AsyncSession = db_dependency
 ):
     user_data = user.model_dump()
     user_data["password"] = user_data["password"].get_secret_value()
@@ -59,7 +59,7 @@ async def create_new_user(
 )
 async def login_user(
     user: OAuth2PasswordRequestForm = Depends(),
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     email = user.username
     db_user = await get_user_by_email(db, email)
@@ -106,7 +106,7 @@ async def login_user(
 )
 async def refresh_token(
     token: RefreshRequest,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     is_valid = await verify_refresh_token(
         token=token.refresh_token,
@@ -150,7 +150,7 @@ async def refresh_token(
 )
 async def logout_user(
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     if not user:
         raise HTTPException(
@@ -175,7 +175,7 @@ async def logout_user(
 )
 async def get_me(
     user: user_dependency,
-    db: AsyncSession = Depends(get_async_session),
+    db: AsyncSession = db_dependency,
 ):
     if not user:
         raise HTTPException(
