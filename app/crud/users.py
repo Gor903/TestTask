@@ -49,19 +49,11 @@ async def create_user(db: AsyncSession, user: dict) -> User:
 
 async def update_user(db: AsyncSession, user_code: str, user: UserUpdate):
     db_user = await get_user_by_code(db, user_code)
+    user = user.model_dump(exclude_none = True)
     if db_user:
-        # TODO: update "genericly"
-        if user.first_name:
-            db_user.first_name = user.first_name
-        if user.last_name:
-            db_user.last_name = user.last_name
-        if user.email:
-            db_user.email = user.email
-        if user.password:
-            hashed_password = await hash_password(user.password.get_secret_value())
-            db_user.password_hash = hashed_password
-        if user.refresh_token:
-            db_user.refresh_token = user.refresh_token
+
+        for i, v in user.items():
+            setattr(db_user, i, v)
 
         await db.commit()
         return db_user
