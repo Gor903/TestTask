@@ -29,3 +29,13 @@ This is a sample project showcasing how to set up a FastAPI application with Doc
 ```bash
     alembic upgrade head
 ```
+
+
+## Tests
+
+### 1. Run the project
+
+### 2. Run tests
+```bash
+    pytest
+```
