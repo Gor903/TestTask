@@ -31,7 +31,7 @@ This is a sample project showcasing how to set up a FastAPI application with Doc
 ```
 
 ### You can access swagger folowing
-**swagger** - http://0.0.0.0:8000/swagger
+**swagger** - http://0.0.0.0:8000/docs
 
 
 ## Tests
