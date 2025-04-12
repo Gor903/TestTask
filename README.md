@@ -30,6 +30,9 @@ This is a sample project showcasing how to set up a FastAPI application with Doc
     alembic upgrade head
 ```
 
+### You can access swagger folowing
+**swagger** - http://0.0.0.0:8000/swagger
+
 
 ## Tests
 
