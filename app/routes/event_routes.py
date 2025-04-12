@@ -1,43 +1,18 @@
 import uuid
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.crud import (create_presentation, create_registration, create_schedule,
+                      get_presentation, get_presentations, get_room, get_rooms,
+                      get_schedule, get_schedules, update_presentation,
+                      update_schedule)
 from app.crud.events import get_registration
-from app.db.database import get_async_session
-from app.dependencies import (
-    user_dependency,
-    db_dependency,
-)
-
-from app.schemas import (
-    PresentationRequest,
-    PresentationResponse,
-    PresentationUpdate,
-    RoomRequest,
-    RoomResponse,
-    SchedulesRequest,
-    SchedulesResponse,
-    ScheduleUpdate,
-    RegistrationResponse,
-)
-
-from app.crud import (
-    create_presentation,
-    create_registration,
-    get_presentation,
-    get_presentations,
-    update_presentation,
-    create_room,
-    get_room,
-    get_rooms,
-    create_schedule,
-    get_schedule,
-    get_schedules,
-    update_schedule,
-)
-
+from app.dependencies import (db_dependency, user_dependency)
+from app.schemas import (PresentationRequest, PresentationResponse,
+                         PresentationUpdate, RegistrationResponse, RoomResponse,
+                         ScheduleUpdate, SchedulesRequest, SchedulesResponse)
 
 router = APIRouter(prefix="/events", tags=["Events"])
 

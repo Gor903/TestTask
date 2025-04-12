@@ -1,11 +1,8 @@
 from fastapi import FastAPI
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.crud import create_room, get_rooms
 from app.db import AsyncSessionMaker, init_db
-from app.crud import get_rooms, create_room
-from app.dependencies import db_dependency
-from .routes import user_router, event_router
+from .routes import event_router, user_router
 
 app = FastAPI()
 
